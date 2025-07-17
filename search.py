@@ -42,7 +42,7 @@ def _sortSumRank(unorderedSumRank):
         for rank in unorderedSumRank:
             if rank[1] > highest[1]:
                 highest = [rank[0], rank[1]]
-        orderedSumRank.append(highest)
+        orderedSumRank.append(highest[0])
         rank[0] = ""
         rank[1] = 0
     return orderedSumRank
