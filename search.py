@@ -1,11 +1,6 @@
 import os
 from html.parser import HTMLParser
 
-class SearchItems:
-    def __init__(self, words):
-        self.words=words
-        self.topDocsAppearsMost=[] # Top documents all words appear most in.
-
 class Parser(HTMLParser):
     pagedata = []
     def handle_data(self, data):
@@ -17,54 +12,47 @@ def figureThatShitOut(words, pagedir):
     stuff = {}
     for name in os.listdir(os.path.join(os.getenv("HOME"), pagedir)):
         item = os.path.join(os.getenv("HOME"), pagedir, name)
-        if os.path.isdir(item):
-            figureThatShitOut(words, os.path.join(pagedir, item))
         if os.path.isfile(item):
             parser = Parser()
-            with open(os.path.join(pagedir, item)) as f:
-                thing = f.read()
-                for c in thing:
+            with open(item) as f:
+                file = f.read()
+                for c in file:
                     parser.feed(c.lower())
 
-                for word in words:
-                    try:
-                        stuff[f.name].append([word, parser.getpagedata().count(word)])
-                    except KeyError:
-                        stuff[f.name] = []
-        else:
-            raise RuntimeError(f"{item} is not file or directory. Is it a symlink or device?")
-    return stuff
+            for word in words:
+                freq = parser.getpagedata().count(word)
+                path = item
+                stuff[path] = freq
+        if os.path.isdir(item):
+            shitFiguredOut = figureThatShitOut(words, os.path.join(pagedir, item))
+            items = list(shitFiguredOut.items())
+            for item in items:
+                stuff[item[0]]=item[1]
+
+    return list(stuff.items())
 
 def _sortSumRank(unorderedSumRank):
     orderedSumRank = []
+    exclude=[]
     for _ in unorderedSumRank:
         highest = ["", 0]
-        for rank in unorderedSumRank:
-            if rank[1] > highest[1]:
-                highest = [rank[0], rank[1]]
+        index=0
+        for i, rank in enumerate(unorderedSumRank):
+            if rank[1] > highest[1] and i not in exclude:
+                highest = rank
+                index=i
+        exclude.append(index)
         orderedSumRank.append(highest[0])
-        rank[0] = ""
-        rank[1] = 0
-    return orderedSumRank
+    return list(reversed(orderedSumRank))
 
 def pageRank(words):
-    rank = {}
-
-    searchItems = SearchItems(words)
+    things = []
     datadir = os.path.join(os.getenv("HOME"), "repos/localengine/search")
     for item in os.listdir(os.path.join(os.getenv("HOME"), datadir)):
-        thing = figureThatShitOut(words, os.path.join(datadir, item))
-        rank[item] = thing
+        shitFiguredOut = figureThatShitOut(words, os.path.join(datadir, item))
+        [things.append(thing) for thing in shitFiguredOut]
 
-    unorderedSumRank = []
-    for k in rank:
-        site = list(rank[k].items())[0][0]
-        words = list(rank[k].items())[0][1]
-        wordCountSum=0
-        for word in words:
-            wordCountSum += word[1]
-        unorderedSumRank.append([site, wordCountSum])
-    orderedSumRank = _sortSumRank(unorderedSumRank)
+    orderedSumRank = _sortSumRank(things)
     return orderedSumRank
 
 def search(words):
