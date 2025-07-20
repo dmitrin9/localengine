@@ -43,7 +43,7 @@ def _sortSumRank(unorderedSumRank):
                 index=i
         exclude.append(index)
         orderedSumRank.append(highest[0])
-    return list(reversed(orderedSumRank))
+    return list(orderedSumRank)
 
 def pageRank(words):
     things = []
