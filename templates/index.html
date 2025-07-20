@@ -4,6 +4,17 @@
 	<head>
 		<title>Home</title>
 		<style>
+			body {
+				font-family: sans-serif;
+			}
+			#container {
+				height: 31rem;
+			}
+			h1, form {
+				position: relative;
+				text-align: center;
+				top: 50%;
+			}
 			#search {
 				width: 300px;
 				height: 25px;
@@ -16,15 +27,42 @@
 				border: 1px solid black;
 				border-radius: 10px
 			}
+			footer {
+				position: relative;
+				height: 20rem;
+			}
+			nav {
+				position: relative;
+				text-align: center;
+				top: 100%;
+			}
+			a {
+				padding-left: 15px;
+			}
 		</style>
 	</head>
 
 	<body>
-		<h1>Localengine</h1>
+		<div id="container">
+			<h1>LocalEngine</h1>
 
-		<form method="POST" action="/">
-			<input type="text"   name="search" id="search" placeholder="Search...">
-			<input type="submit" name="submit" id="submit" value="Enter">
-		</form>
+			<form method="POST" action="/">
+				<input type="text"   name="search" id="search" placeholder="Search...">
+				<input type="submit" name="submit" id="submit" value="Enter">
+			</form>
+		</div>
+		<script>
+			document.addEventListener("DOMContentLoaded", function() {
+				const input = document.getElementById("search");
+				input.value="";
+				input.focus();
+			});
+		</script>
 	</body>
+
+	<footer>
+		<nav>
+			<a href="https://github.com/dmitrin9/localengine">Github</a>
+		</nav>
+	</footer>
 </html>

@@ -25,7 +25,7 @@ def figureThatShitOut(words, pagedir):
                 stuff[path] = freq
         if os.path.isdir(item):
             shitFiguredOut = figureThatShitOut(words, os.path.join(pagedir, item))
-            items = list(shitFiguredOut.items())
+            items = shitFiguredOut
             for item in items:
                 stuff[item[0]]=item[1]
 
