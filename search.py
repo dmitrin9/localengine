@@ -1,5 +1,11 @@
 import os
+import re
 from html.parser import HTMLParser
+
+def count(string, word):
+    pattern = r"\b" + re.escape(word) + r"\b"
+    matches = re.findall(pattern, string, re.IGNORECASE)
+    return len(matches)
 
 class Parser(HTMLParser):
     pagedata = []
@@ -10,6 +16,7 @@ class Parser(HTMLParser):
 
 def figureThatShitOut(words, pagedir):
     stuff = {}
+    totalFreq = 0
     for name in os.listdir(os.path.join(os.getenv("HOME"), pagedir)):
         item = os.path.join(os.getenv("HOME"), pagedir, name)
         if os.path.isfile(item):
@@ -20,7 +27,12 @@ def figureThatShitOut(words, pagedir):
                     parser.feed(c.lower())
 
             for word in words:
-                freq = parser.getpagedata().count(word)
+                freq = count(parser.getpagedata(), word)
+                totalFreq+=freq
+                if freq > 0:
+                    print(parser.getpagedata())
+                    print(word)
+                    print(freq)
                 path = item
                 stuff[path] = freq
         if os.path.isdir(item):
@@ -29,6 +41,8 @@ def figureThatShitOut(words, pagedir):
             for item in items:
                 stuff[item[0]]=item[1]
 
+    if totalFreq == 0:
+        return []
     return list(stuff.items())
 
 def _sortSumRank(unorderedSumRank):
